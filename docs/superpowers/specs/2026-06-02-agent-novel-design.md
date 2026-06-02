@@ -92,55 +92,96 @@ awesome-novel-skill（开发者仓库）
 
 ---
 
-## 二、Agent 标准定义模板
+## 二、Agent 标准定义模板（10 维）
 
-每个 agent 遵循统一的定义骨架。frontmatter 声明元信息、记忆、知识库；body 定义角色、流程、边界。
+每个 agent 遵循统一的 10 维定义骨架，涵盖身份、能力、契约、运行时、工具、行为、错误处理、验收、状态、可观测性。
 
 ```
 ---
 name: {agent-name}
 description: 一句话说清职责
-role: 在创作流程中的定位（如：卷纲规划者、读者代言人）
+role: 在创作流程中的定位
 react: true
+model: auto | flash         # auto=创作决策, flash=执行可降级
 memory:
-  - path: {读的文件}
-    description: {为什么读}
-    access: read | write | read-write
-  - path: {写的文件}
-    ...
-knowledge_base:
-  - path: {参考文件}
+  - path: {记忆力路径}
     description: {用途}
-model: auto | flash（auto=需要创作决策能力，flash=执行类可降级）
+    access: read | write | read-write
+knowledge_base:
+  - path: {知识库路径}
+    description: {用途}
 ---
 
-# {Agent Name} — {中文角色名}
+# {Agent Name}
 
-## Role
-{一段话描述：什么时候被调用、做什么、不做什么}
+## 一、身份与角色（Who）
+Agent ID: {唯一标识}
+Role: {一句话职责：规划/生成/评审/测试}
+Purpose: {存在价值与核心目标}
+Persona: {语气、风格、约束}
+Dependencies: {依赖哪些 Agent 的输出、是否需要人工介入}
 
-## Input
-- {文件路径} → {内容说明}
+## 二、能力与职责（What）
+Core Responsibilities:
+  - {任务 1}
+  - {任务 2}
+  - {任务 3}
+Out of Scope:
+  - {明确不做什么}
+Special Skills: {专属能力}
+Decision Rights: {可自主决策范围}
 
-## Output  
-- {文件路径} → {内容说明}
+## 三、输入/输出契约（I/O Contract）
+Input Sources:
+  - {文件路径} → {内容说明}
+Input Schema: {格式、必填字段}
+Output Artifacts:
+  - {文件路径} → {内容说明}
+Output Schema: {结构、约束}
+Hand-off Protocol: {交接规则}
 
-## Tools
-| 工具 | 允许 | 禁止 |
-|------|------|------|
-| Read | {允许读什么} | {禁止读什么} |
-| Write/Edit | {允许写什么} | {禁止写什么} |
-| Agent | {是否允许 spawn 子任务} | — |
+## 四、运行时配置（Runtime）
+LLM Connector: {模型、版本}
+Prompt Template: {系统提示词结构}
+Resource Limits: {Token 数、温度、超时}
 
-## Process
-OBSERVE: ...
-THINK: ...
-ACT: ...
-LOOP: ...
+## 五、工具与权限（Tools & Permissions）
+Allowed Tools:
+  | 工具 | 允许 | 禁止 |
+  |------|------|------|
+  | Read | ... | ... |
+Tool Scope: {作用范围}
+Permission Level: {读写/只读/执行}
 
-## Verification
-- {验收项 1}
-- {验收项 2}
+## 六、行为规范与约束（Behavior）
+Principles:
+  - {原则 1}
+Anti-Patterns:
+  - {禁止行为}
+Quality Gates: {自检项}
+Communication Style: {沟通规则}
+
+## 七、错误处理与回退（Error Handling）
+Failure Modes: {失败类型}
+Retry Policy: {重试条件、次数}
+Fallback Logic: {回退到哪里}
+Termination Criteria: {何时终止}
+
+## 八、验收标准与产出（Done Criteria）
+Definition of Done:
+  - {完成标准 1}
+Success Metrics: {通过率、完整性}
+Output Validation: {格式、逻辑检查}
+
+## 九、上下文与状态管理（Context & State）
+Context Isolation: {每次运行是否独立上下文}
+State Persistence: {状态存储方式}
+Shared Context Keys: {可共享的元信息}
+
+## 十、可观测性与调试（Observability）
+Log Level: {INFO/DEBUG/ERROR}
+Metrics: {调用次数、成功率、耗时}
+Debug Artifacts: {完整 Prompt、LLM 原始响应}
 ```
 
 ---
