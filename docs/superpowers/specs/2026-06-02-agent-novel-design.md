@@ -144,6 +144,12 @@ Hand-off Protocol: {交接规则}
 LLM Connector: {模型、版本}
 Prompt Template: {系统提示词结构}
 Resource Limits: {Token 数、温度、超时}
+Loop Integration (react: true):
+  OBSERVE ← 三(Input Sources) + 五(Read tools) + 九(Context Isolation)
+  THINK  ← 二(Decision Rights) + 六(Principles + Anti-Patterns)
+  ACT    ← 三(Output Artifacts) + 五(Write/Agent tools) + 三(Hand-off)
+  VERIFY ← 八(Definition of Done) + 六(Quality Gates)
+  ERROR  ← 七(Error Handling)
 
 ## 五、工具与权限（Tools & Permissions）
 Allowed Tools:
@@ -269,8 +275,32 @@ knowledge_base:
 - **LLM Connector:** Claude 4+ / 等效模型，支持长上下文（100K+ tokens）
 - **Temperature:** 0.3（调度与判断需要低随机性）
 - **Resource Limits:** 每次 OBSERVE→THINK→ACT 循环不超过 4K tokens 输出
+- **Loop Integration:**
+  ```
+  System Prompt ← 一(身份+人格) + 二(职责+OOS) + 六(规范) + 八(验收标准)
 
-#### 五、工具与权限
+  OBSERVE:
+    读什么？← 三(Input Sources): status.md, settings/, .claude/memory/
+    用什么读？← 五(工具): Read, Glob, Grep
+    状态从哪重建？← 九(Context Isolation): 每次从文件系统重建
+
+  THINK:
+    决策依据？← 二(Decision Rights) + 九(Shared Context Keys: phase)
+    约束条件？← 六(Principles)
+    优先级？← 一(Purpose): 按顺序推进阶段
+
+  ACT:
+    产出什么？← 三(Output Artifacts): order文件
+    用什么写？← 五(工具): Write → .agent/task/, Agent → 子agent
+    交接？← 三(Hand-off Protocol): 写order + 调用子agent
+
+  VERIFY:
+    完成标准？← 八(Definition of Done)
+    质量门？← 六(Quality Gates): 产出验证 + lore-keeping完整性
+    不通过？← 七(Error Handling): 重试/报错
+
+  LOOP: 回到 OBSERVE（直到全部阶段完成）
+  ```
 - **Allowed Tools:**
   | 工具 | 允许 | 禁止 |
   |------|------|------|
@@ -386,6 +416,33 @@ knowledge_base:
 - **LLM Connector:** Claude 4+ / 等效模型
 - **Temperature:** 0.7（需要创作性规划）
 - **Resource Limits:** 单次调用输出 ≤ 8K tokens
+- **Loop Integration:**
+  ```
+  System Prompt ← 一(身份+人格) + 二(职责) + 六(规范) + 八(验收标准)
+
+  OBSERVE:
+    读什么？← 三(Input Sources): order + story.md + settings/ + knowledge/
+    用什么读？← 五(工具): Read, Glob
+
+  THINK:
+    卷边界？核心冲突？节奏分布？
+    依据：二(Core Responsibilities + Decision Rights)
+    约束：六(Principles): 每卷独立冲突, 每章可追溯
+    反模式：六(Anti-Patterns): 不超一卷, 不矛盾前卷
+
+  ACT:
+    展示方案 → 作者确认 → 写volume-{N}.md
+    工具：五(Write → volumes/)
+    约束：三(Output Schema): 符合volume-setting-style
+
+  VERIFY:
+    完成标准？← 八(Definition of Done): 格式正确 + 可追溯 + 作者确认
+    质量门？← 六(Quality Gates): 因果链 + 起承转合
+    不通过？← 七(Error Handling): 根据反馈调整, 最多3轮
+
+  NOT DONE → 回到 THINK(基于作者反馈重新规划)
+  DONE → 三(Hand-off): 写文件后结束, novel-agent检测完成
+  ```
 
 #### 五、工具与权限
 - **Allowed Tools:**
@@ -487,6 +544,32 @@ knowledge_base:
 - **LLM Connector:** Claude 4+ / 等效模型
 - **Temperature:** 0.7（场景创作需要创造力）
 - **Resource Limits:** 单次输出 ≤ 6K tokens
+- **Loop Integration:**
+  ```
+  System Prompt ← 一(身份+人格) + 二(职责) + 六(规范) + 八(验收标准)
+
+  OBSERVE:
+    读什么？← 三(Input Sources): order + volume-{N}.md + character-setting/ + 前3章
+    用什么读？← 五(工具): Read, Glob
+
+  THINK:
+    情绪曲线？场景序列？伏笔布局？
+    依据：二(Core Responsibilities): 场景拆分 + 情绪设计 + hooks管理
+    约束：六(Principles): 有memo + 起承转合 + 场景有目的 + hooks有埋收
+    反模式：六(Anti-Patterns): 不设过渡场景, 不超卷约束
+
+  ACT:
+    展示建议 → 作者确认 → 写chapters/vol-{N}-ch-{M}.md
+    工具：五(Write → chapters/)
+
+  VERIFY:
+    完成标准？← 八(Definition of Done): 格式正确 + 4部分完整 + 作者确认
+    质量门？← 六(Quality Gates): memo清晰 + 场景无冗余
+    不通过？← 七(Error Handling): 根据反馈修改, 最多3轮
+
+  NOT DONE → 回到 THINK
+  DONE → 三(Hand-off): 写文件后结束
+  ```
 
 #### 五、工具与权限
 - **Allowed Tools:**
@@ -590,6 +673,33 @@ knowledge_base:
 - **LLM Connector:** Claude Flash / 快模型
 - **Temperature:** 0.3（组装型任务低随机性）
 - **Resource Limits:** 单次输出 ≤ 4K tokens
+- **Loop Integration:**
+  ```
+  System Prompt ← 一(身份+人格) + 二(职责) + 六(规范) + 八(验收标准)
+
+  OBSERVE:
+    读什么？← 三(Input Sources): order + chapter.md + memory/anti-ai.md + memory/writer-style.md
+    用什么读？← 五(工具): Read → chapters/, .claude/memory/
+
+  THINK:
+    9层如何填充？优先注入哪些规则？
+    依据：二(Decision Rights): 自主决定填充方式 + 优先级排序
+    约束：六(Principles): 严格按9层骨架, [writer-preference]优先, 标注来源
+    反模式：六(Anti-Patterns): 不meta泄漏, 不整段复制章纲, 不加自由指令
+
+  ACT:
+    组装提示词 → 写prompts/vol-{N}-ch-{M}-prompt.md
+    工具：五(Write → prompts/)
+    约束：三(Output Schema): 9层完整
+
+  VERIFY:
+    完成标准？← 八(Definition of Done): 9层完整 + 规则已注入 + 无泄漏
+    质量门？← 六(Quality Gates): 层不缺 + memo已注入 + 反AI已注入 + 文风已注入
+    回退？← 七(Fallback Logic): 某层无法填充则留空标注, 不硬填
+
+  NOT DONE → 回到 THINK
+  DONE → 三(Hand-off): 写文件后结束
+  ```
 
 #### 五、工具与权限
 - **Allowed Tools:**
@@ -685,6 +795,35 @@ knowledge_base:
 - **LLM Connector:** Claude 4+ / 等效模型，需要长上下文输出
 - **Temperature:** 0.8（正文创作需要多样性）
 - **Resource Limits:** 单次输出 ≤ 目标字数 × 1.2
+- **Loop Integration:**
+  ```
+  System Prompt ← 一(身份+人格) + 二(职责+OOS) + 六(规范) + 八(验收标准)
+
+  OBSERVE:
+    读什么？← 三(Input Sources): write-order.md + prompt.md
+    用什么读？← 五(Read → 仅prompts/当前章)
+    不读什么！← 一(Dependencies): 只依赖prompt.md, 不读任何其他文件
+    上下文隔离 ← 九(Context Isolation): 严格纯净
+
+  THINK:
+    场景顺序？段落拆分？字数分配？
+    依据：二(Core Responsibilities): 逐段产出 + 控制字数
+    约束：六(Principles): 严格遵守提示词
+    反模式：六(Anti-Patterns): 不加未指定角色/情节, 不用疲劳词
+
+  ACT:
+    写正文 → archives/vol-{N}-ch-{M}-{slug}.draft.md
+    工具：五(Write → archives/*.draft.md)
+    超额标注：如确需超出提示词, 用 [AI addition:] 标注
+
+  VERIFY:
+    完成标准？← 八(Definition of Done): 字数≥80% + 场景全覆盖 + 无未标注超范围
+    质量门？← 六(Quality Gates): 无AI味
+    不通过？← 七(Error Handling): 补充/重写, 最多2次
+
+  NOT DONE → 回到 ACT(补充/修改)
+  DONE → 三(Hand-off): novel-agent保存AI原版快照后调reader
+  ```
 
 #### 五、工具与权限
 - **Allowed Tools:**
@@ -787,6 +926,25 @@ knowledge_base:
 - **LLM Connector:** Claude Flash / 快模型（反馈任务不需要顶级模型）
 - **Temperature:** 0.5（平衡一致性与多样性）
 - **Resource Limits:** 单次输出 ≤ 2K tokens
+- **Invocation Integration (react: false, 一次调用):**
+  ```
+  System Prompt ← 一(身份+人格) + 二(职责) + 六(规范)
+
+  INVOKE:
+    输入 ← 三(Input Sources): archives/*.draft.md + settings/genre-setting.md
+    工具 ← 五(Read → 只读, Write全部禁止)
+
+  PROCESS:
+    评估维度 ← 二(Core Responsibilities): 爽点/获得感/期待感/情绪曲线/问题
+    约束 ← 六(Anti-Patterns): 不给笼统好评, 不跨章要求
+    质量 ← 六(Quality Gates): 五项全部完成 + 至少一个具体问题
+
+  OUTPUT:
+    结构化报告(对话输出, 不写文件)
+    格式 ← 三(Output Schema): 含原文依据的反馈
+
+  DONE → novel-agent根据反馈决策: 修改或归档
+  ```
 
 #### 五、工具与权限
 - **Allowed Tools:**
