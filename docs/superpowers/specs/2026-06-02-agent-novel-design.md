@@ -92,9 +92,60 @@ awesome-novel-skill（开发者仓库）
 
 ---
 
-## 二、Agent 分工
+## 二、Agent 标准定义模板
 
-系统共 6 个 agent，其中 5 个有自己的 `react: true` loop，1 个为一次性调用。
+每个 agent 遵循统一的定义骨架。frontmatter 声明元信息、记忆、知识库；body 定义角色、流程、边界。
+
+```
+---
+name: {agent-name}
+description: 一句话说清职责
+role: 在创作流程中的定位（如：卷纲规划者、读者代言人）
+react: true
+memory:
+  - path: {读的文件}
+    description: {为什么读}
+    access: read | write | read-write
+  - path: {写的文件}
+    ...
+knowledge_base:
+  - path: {参考文件}
+    description: {用途}
+model: auto | flash（auto=需要创作决策能力，flash=执行类可降级）
+---
+
+# {Agent Name} — {中文角色名}
+
+## Role
+{一段话描述：什么时候被调用、做什么、不做什么}
+
+## Input
+- {文件路径} → {内容说明}
+
+## Output  
+- {文件路径} → {内容说明}
+
+## Tools
+| 工具 | 允许 | 禁止 |
+|------|------|------|
+| Read | {允许读什么} | {禁止读什么} |
+| Write/Edit | {允许写什么} | {禁止写什么} |
+| Agent | {是否允许 spawn 子任务} | — |
+
+## Process
+OBSERVE: ...
+THINK: ...
+ACT: ...
+LOOP: ...
+
+## Verification
+- {验收项 1}
+- {验收项 2}
+```
+
+---
+
+## 三、Agent 规格
 
 | # | Agent | 有 loop | 写文件 | 只读输入 | 产出 |
 |---|-------|---------|--------|---------|------|
@@ -105,7 +156,7 @@ awesome-novel-skill（开发者仓库）
 | 5 | **writer** | 自有 | archives/ | 仅提示词 | 正文草稿 |
 | 6 | **reader** | 无（一次调用） | 不写 | 正文 + 题材类型 | 反馈报告 |
 
-### 2.1 novel-agent（入口 + 调度 + lore-keeping）
+### 3.1 novel-agent（入口 + 调度 + lore-keeping）
 
 ```
 作者 @novel-agent → 进入总循环
@@ -143,7 +194,7 @@ OBSERVE(result):
 - 如有文风偏好 → 语义合并后追加 `.claude/memory/writer-style.md`
 - 更新 `.agent/status.md`
 
-### 2.2 volume-planner（卷纲规划）
+### 3.2 volume-planner（卷纲规划）
 
 ```
 触发: novel-agent 写 .agent/task/volume-plan-order.md
@@ -168,7 +219,7 @@ LOOP: 直到作者确认
 - 章节间有因果链（前章末→后章始）
 - 卷的起承转合完整
 
-### 2.3 chapter-planner（章纲规划）
+### 3.3 chapter-planner（章纲规划）
 
 ```
 触发: novel-agent 写 .agent/task/chapter-plan-order.md
@@ -194,7 +245,7 @@ LOOP: 直到作者确认
 - 场景列表有明确目的（每场推进什么）
 - hooks 标注了埋/收关系
 
-### 2.4 prompt-crafter（提示词生成）
+### 3.4 prompt-crafter（提示词生成）
 
 ```
 触发: novel-agent 写 .agent/task/prompt-order.md
@@ -219,7 +270,7 @@ LOOP: 直到验收通过
 - 文风偏好已注入
 - 不包含 prompt 本身不该有的指令（如"以下是小说的正文"这种 meta 泄漏）
 
-### 2.5 writer（正文写作）
+### 3.5 writer（正文写作）
 
 ```
 触发: novel-agent 写 .agent/task/write-order.md
@@ -243,7 +294,7 @@ LOOP: 直到字数达标、验收通过
 - 无超出提示词范围的角色/情节添加
 - reader 反馈通过
 
-### 2.6 reader（读者反馈）
+### 3.6 reader（读者反馈）
 
 ```
 触发: novel-agent 在正文写完后调用，solo 一次
@@ -268,7 +319,7 @@ ACT:
 
 ---
 
-## 三、Agent 通信机制
+## 四、Agent 通信机制
 
 Agent 之间无直接消息传递。通信通过**文件握手**实现：
 
@@ -294,7 +345,7 @@ novel-agent 需要卷纲时:
 
 ---
 
-## 四、项目目录结构
+## 五、项目目录结构
 
 ```
 project/
@@ -338,7 +389,7 @@ project/
 
 ---
 
-## 五、init.py 职责
+## 六、init.py 职责
 
 init.py 是 awesome-novel-skill 的核心入口，负责从 0 到 1 生成完整的用户项目目录。
 
@@ -360,7 +411,7 @@ init.py 是 awesome-novel-skill 的核心入口，负责从 0 到 1 生成完整
 
 ---
 
-## 六、记忆继承策略
+## 七、记忆继承策略
 
 ```
 skill knowledge/              →  用户项目 .claude/memory/
@@ -377,7 +428,7 @@ skill knowledge/              →  用户项目 .claude/memory/
 
 ---
 
-## 七、动态记忆
+## 八、动态记忆
 
 ### 7.1 工作流程
 
