@@ -29,7 +29,8 @@
   "files": [
     "SKILL.md",
     "skills/",
-    "references/",
-    "scripts/"
+    "agents/",
+    "templates/",
+    "tools/"
   ]
 }

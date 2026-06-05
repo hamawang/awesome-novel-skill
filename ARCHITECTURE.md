@@ -1,4 +1,4 @@
-# awesome-novel-skilll 架构文档
+# awesome-novel-skill 架构文档
 
 > 面向开发者理解实现细节。面向使用者的内容见 [README.md](./README.md)。
 
@@ -20,22 +20,39 @@ Step 1（检测状态）→ 匹配路由 → Read 子skill → 执行子task →
 
 | 角色 | 职责 |
 |-----|------|
-| **主 Agent（SKILL.md）** | 状态检测、分发路由、协调子技能 |
-| **子技能（skills/*/）** | 各自负责一个具体环节的执行 |
+| **主 Agent（novel-agent）** | 顶层入口，通过 `@novel-agent` 加载进主 AI。检测状态、写 order 文件、通过 Agent 工具调度子 agent。**不直接代劳子 agent 的工作** |
+| **子 Agent（volume-planner / chapter-planner / prompt-crafter / writer / reader / updater）** | 各自负责一个具体环节的执行，由 novel-agent 调度，完成后清理 order 文件 |
 
-### 子技能分工
+### Agent 分工
 
-| 子技能 | 职责 | 触发条件 |
-|--------|------|----------|
-| `setup/` | 项目初始化 + 设定 | 新项目 |
-| `outline/` | 主线拆纲 + 卷纲 | "规划卷纲"、"故事线" |
-| `chapter/` | 章纲生成 | status=outline |
-| `prompt/` | 提示词生成 | status=outline，无提示词 |
-| `prompt-verify/` | 提示词验收 | status=outline，有提示词 |
-| `write/` | 正文生成 | status=draft，无草稿 |
-| `body-verify/` | 正文验收 | status=draft，有草稿 |
-| `review/` | 深度评审 | 作者要求 |
-| `archive/` | 归档 + 动态记忆 | 作者确认归档 |
+| Agent | 职责 | 由谁调度 |
+|-------|------|----------|
+| `volume-planner` | 主线拆纲 + 卷纲规划 | novel-agent |
+| `chapter-planner` | 章纲生成（memo + 情绪设计 + hooks） | novel-agent |
+| `prompt-crafter` | 9 层提示词组装 | novel-agent |
+| `writer` | 正文生成 + AI 味自检 | novel-agent |
+| `reader` | 10 维 60+ 细项深度评审 | novel-agent（可选） |
+| `updater` | 归档 + lore-keeping + 设定变更 | novel-agent |
+
+---
+
+### 调度架构
+
+```
+主 AI（加载 @novel-agent）
+  │
+  ├── 读 status.md → 判断当前 phase
+  ├── 写 order 文件到 .agent/task/{type}-order.md
+  ├── 通过 Agent 工具调度子 agent
+  │     ├── volume-planner / chapter-planner（outline）
+  │     ├── prompt-crafter / writer（draft）
+  │     ├── reader（review，可选）
+  │     └── updater（archive / setting-update）
+  ├── 子 agent 完成后清理 order 文件
+  └── 检测到 order 清理 → 推进下一阶段
+```
+
+**要点：** novel-agent 不直接写内容文件，只写 order 文件。子 agent 通过 Agent 工具调用，独立完成任务。
 
 ---
 
@@ -45,13 +62,23 @@ Step 1（检测状态）→ 匹配路由 → Read 子skill → 执行子task →
 [设定阶段]
   story.md → settings/（world/character/writing/genre）
 
-[卷纲阶段]
+[卷纲阶段]（四维方法论）
   story.md → volumes/volume-{N}.md
+  ├─ 情绪走向：整卷情绪变化弧线（压抑→压抑→提升→打脸→装逼）
+  ├─ 冲突阶梯：2-4 层逐级升高的障碍，每层间有转折点
+  ├─ 信息差：卷定义起点→终点（开始时谁↦谁知道什么不知道什么，结束时谁知道了新信息）
+  └─ 场景卡：每章三要素（主角想干啥+拦着他+悬念）
 
-[章循环]
+[章循环]（卷→章继承 + 章内小递推）
+  chapter.md 继承卷的情绪位置/冲突层位/信息差弧段
+  ├─ 章内微弧线：从卷走向的当前位置衍生
+  ├─ 章内小阶梯：试探→遭遇→升级，每步比前一步难
+  ├─ 章内信息差变化：设→用→揭→新信息差
+  └─ 场景卡细化：三段锚点法（感官+动作+判断）
+
   chapter.md (status=outline) → prompt.md → verify → chapter.md (status=draft)
   → archives/*.draft.md → verify → archive
-  → .agent/*-ai.md + .memory/*.md（动态记忆）
+  → .agent/*-ai.md + .claude/memory/*.md（动态记忆，updater 归档时合并）
 ```
 
 ---
@@ -78,78 +105,121 @@ Step 1（检测状态）→ 匹配路由 → Read 子skill → 执行子task →
 │   └── *.md              # 定稿（归档后）
 ├── .agent/               # 临时文件
 │   ├── status.md         # Agent 状态追踪
+│   ├── task/             # 子 agent order 文件
 │   └── {chapter}-draft-ai.md  # AI 原版快照
-└── .memory/              # 持久记忆
-    ├── anti-ai.md        # 反 AI 模式
-    └── writer-style.md   # 作家文风
+├── .claude/
+│   ├── memory/           # 写作记忆（agent 实时记录 + updater 兜底）
+│   │   ├── volume-memory.md    # 卷纲环节反馈
+│   │   ├── chapter-memory.md   # 章纲环节反馈
+│   │   ├── prompt-memory.md    # 提示词环节反馈
+│   │   └── writing-memory.md   # 正文写作环节反馈
+│   ├── knowledge/        # 静态知识（初始化时从 skill 仓库继承）
+│   │   ├── anti-ai.md          # 反 AI 模式库
+│   │   ├── writer-style.md     # 作家文风偏好
+│   │   ├── permanent-memory.md # 永久记忆（从 memory/ 晋升的高频条目）
+│   │   ├── format-specs/       # 格式规范
+│   │   └── genre-example/      # 题材案例
+│   └── agents/           # Agent 定义（初始化时从 agents/ 部署）
 ```
 
 ---
 
-## 4. references/ 内容说明
+## 4. knowledge/ 与 memory/ 内容说明（Skill 仓库视角）
 
 ```
-references/
-├── chapter-quality-checklist.md  # 正文验收清单（15项）
-├── chapter-setting-style.md      # 章纲格式 + 情绪设计
-├── character-setting-style.md    # 角色认知6层模型
-├── genre-style.md               # 节奏规则/满足类型/禁忌
-├── world-setup-style.md         # 地理/政治/规则结构
-├── story-arc-style.md           # 主线拆纲方法论
-├── volume-setting-style.md      # 卷纲格式
-├── prompt-setting-style.md      # 提示词组装结构
-├── writing-style.md             # 写作风格方法论
-├── anti-ai/                    # 反 AI 规则库
-│   ├── fanqie.md              # 反 AI 规则学习库
-│   ├── common-rules.md         # 通用反 AI 规则
-│   └── {genre}/defaults.md     # 题材反 AI 默认模式
-├── writer-style/              # 作家文风参考
-│   └── {genre}/defaults.md     # 题材文风默认参考
-└── genre-example/              # 填充案例（按题材）
+knowledge/                   # 静态参考知识 → 部署到项目 .claude/knowledge/
+├── format-specs/            # 格式规范
+│   ├── chapter-quality-checklist.md  # 正文验收清单（15项）
+│   ├── chapter-setting-style.md      # 章纲格式 + 情绪设计 + 章内冲突阶梯
+│   ├── character-setting-style.md    # 角色认知6层模型
+│   ├── genre-style.md               # 节奏规则/满足类型/禁忌
+│   ├── world-setup-style.md         # 地理/政治/规则结构
+│   ├── story-arc-style.md           # 主线拆纲方法论
+│   ├── volume-setting-style.md      # 卷纲格式 + 情绪走向/冲突阶梯/信息差/场景卡方法论
+│   ├── prompt-setting-style.md      # 提示词组装结构（含驱动力/信息差/冲突阶梯层位）
+│   ├── writing-style.md             # 写作风格方法论
+│   └── memory-format-spec.md        # 记忆格式规范 + 生命周期
+└── genre-example/           # 填充案例（按题材）
+
+memory/                      # 静态参考素材 → 部署到项目 .claude/knowledge/
+├── anti-ai/                 # 反 AI 规则库（→ anti-ai.md）
+│   ├── common-rules.md      # 通用反 AI 规则
+│   └── {genre}.md           # 题材反 AI 默认模式
+└── writer-style/            # 文风参考（→ writer-style.md，可选）
+
+项目 .claude/memory/ 下的动态记忆文件不在 Skill 仓库中，由 init.py 初始化为空桩，后续由 agent 在写作过程中填充。
 ```
 
 ---
 
-## 5. 动态记忆系统
+## 5. 记忆系统
+
+### 两级架构
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    .claude/memory/                           │
+│  动态记忆（各环节实时记录，updater 兜底维护）               │
+│  ┌──────────────┐ ┌──────────────┐ ┌────────────────────┐  │
+│  │volume-memory │ │chapter-memory│ │prompt-memory       │  │
+│  │卷纲反馈       │ │章纲反馈       │ │提示词反馈           │  │
+│  └──────────────┘ └──────────────┘ └────────────────────┘  │
+│  ┌────────────────────┐                                     │
+│  │writing-memory      │                                     │
+│  │正文写作反馈        │                                     │
+│  └────────────────────┘                                     │
+└────────────────────────────────────────────────────────────┘
+         │ use_count >= 4 晋升
+         ▼
+┌────────────────────────────────────────────────────────────┐
+│              .claude/knowledge/permanent-memory.md           │
+│  永久记忆（高频条目的沉淀，跨项目持久）                     │
+│  连续 3 次 sweep 未使用 → 标记待移除 → 作者确认后删除      │
+└────────────────────────────────────────────────────────────┘
+```
 
 ### 工作流程
 
+记忆捕获分两层，确保无遗漏：
+
 ```
-生成草稿 → 保存 AI 原版到 .agent/ → 作家修改 → 归档时 diff 对比 → 追问确认 → 语义合并 → 记录到 .memory/
+第一层：agent 实时记录（写作过程中）
+  agent 与作者讨论 → 作者反馈确认 → agent 识别可记录反馈
+  → 追加到对应 memory 文件（volume/chapter/prompt/writing）
+  → 递增已引用条目的 use_count
+
+第二层：updater 兜底 sweep（agent 任务完成后）
+  novel-agent 调度 updater → 读全部 memory 文件
+  → 格式验证 → 查重 → 超 50 条压缩 → 晋升 / 降级永久记忆
+  → 询问作者"还有要记的吗？"
 ```
 
-### 文件职责
+### 条目生命周期
 
-| 文件 | 时效 | 管理方 |
-|-----|------|------|
-| `.agent/{chapter}-draft-ai.md` | 临时，本章归档后删除 | Skill 自动 |
-| `.agent/{chapter}-draft-diff.md` | 临时，回顾完成后删除 | Skill 自动 |
-| `.memory/anti-ai.md` | 持久，积累反 AI 模式 | 作家私有 |
-| `.memory/writer-style.md` | 持久，积累作家文风 | 作家私有 |
+```
+写入 memory/ → 被 agent 引用（use_count++）→ use_count >= 4
+→ 晋升到 knowledge/permanent-memory.md（保留全部字段 + [promoted] 标记）
+→ 后续写作周期持续引用 → 保留
+→ 连续 3 次 sweep 未引用 → 展示给作者确认 → 删除
+```
 
-### 语义合并规则
+### 记录规则
 
-1. **完全相同** → 跳过，告知作家"已存在"
+- **原文**保留作者说法的关键词，不转写
+- **结论**必须是可操作指引，不写空话
+- **场景**描述触发条件，不写"卷纲讨论"这类泛词
+- 同环节多次引用同一条目只计 1 次 use_count
+
+### 语义合并（归档 diff）
+
+归档时 updater 对比 AI 原版快照 vs 最终正文：
+
+1. **完全相同** → 跳过
 2. **语义重复** → 合并为一条，用更好的表述
 3. **场景重叠** → 扩展已有条目的场景范围
 4. **冲突** → 询问作家确认
 
-### 提示词注入
-
-每次生成提示词时：
-1. 读取 `{project}/.memory/anti-ai.md`
-2. 读取 `{project}/.memory/writer-style.md`
-3. 读取 `references/anti-ai/{genre}/defaults.md`
-4. 读取 `references/writer-style/{genre}/defaults.md`
-5. Agent 语义去重、合并冲突、提炼规则
-6. 标注来源 `[作家偏好]` / `[社区defaults]`，注入提示词"写作风格"部分
-
-### 社区贡献
-
-1. 作家说"贡献这个模式"
-2. Skill 读取 `.memory/`，提取适合社区的条目
-3. 生成 community-ready 格式
-4. 引导作家提 PR 到 `references/`
+语义合并结果写入 `.claude/knowledge/anti-ai.md` 和 `.claude/knowledge/writer-style.md`，标注 `[writer-preference]`。
 
 ---
 
@@ -157,16 +227,16 @@ references/
 
 ### 贡献社区 defaults
 
-1. 作家在 `.memory/` 积累自己的模式
+1. 作家在 `.claude/memory/` 积累自己的模式
 2. 说"贡献这个模式"
 3. Skill 生成 community-ready 格式
-4. 引导作家提 PR 到 `references/`
+4. 引导作家提 PR 到 `memory/anti-ai/` 或 `knowledge/`
 
 ### 新增题材类型
 
-1. 在 `references/genre-example/` 添加题材填充案例
-2. 在 `references/anti-ai/{genre}/defaults.md` 添加反 AI 默认模式
-3. 在 `references/writer-style/{genre}/defaults.md` 添加文风参考
+1. 在 `knowledge/genre-example/` 添加题材填充案例
+2. 在 `memory/anti-ai/` 添加反 AI 默认模式
+3. 在 `memory/writer-style/` 添加文风参考
 
 ---
 
