@@ -73,6 +73,7 @@ cp -r memory ~/.claude/skills/awesome-novel/
 cp -r tools ~/.claude/skills/awesome-novel/
 cp SKILL.md ~/.claude/skills/awesome-novel/
 echo "安装完成!"
+```
 
 看到 "安装完成" 就可以了。
 
