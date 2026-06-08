@@ -74,7 +74,9 @@ Step 4: 验收自检
 5. **特殊检查一：角色外貌描写**——额外检查每个 L5 场景的核心事件是否触发外貌描写条件（新角色登场/角色外貌变化/场景涉及外貌感知）。如果触发，加载 `knowledge/scene-craft/appearance/universal.md` + `knowledge/scene-craft/appearance/{题材}.md`（如存在），经四步转化后追加到 L8
 6. **特殊检查二：心理活动/内心独白**——额外检查每个 L5 场景的核心事件 + 情绪设计 + 关键抉择是否触发心理描写条件（角色遭遇重大事件/情绪剧烈波动/面临重大抉择/打脸反转/内心冲突）。如果触发，加载 `knowledge/scene-craft/inner-mono/universal.md` + `knowledge/scene-craft/inner-mono/{题材}.md`（如存在），经四步转化后追加到 L8
 7. **特殊检查三：死亡/牺牲场景**——额外检查每个 L5 场景的核心事件是否涉及角色死亡/牺牲/下线（关键词：阵亡、陨落、牺牲、被杀）。如果触发，加载 `knowledge/scene-craft/death-scene/universal.md`，经四步转化后追加到 L8
-8. **始终加载：文笔技法**——无论本章包含什么场景，始终加载 `knowledge/scene-craft/prose/universal.md`（四条文笔通用技法：抽象具体化/镜头节奏/动词代形容词/感官叠加），经四步转化后追加到 L8
+8. **始终加载**——无论本章包含什么场景，始终加载以下文件，经四步转化后追加到 L8：
+   - `knowledge/scene-craft/prose/universal.md`（文笔技法：抽象具体化/镜头节奏/动词代形容词/感官叠加）
+   - `knowledge/scene-craft/pov/universal.md`（视角切换：视角分界/物理转场/信息差错位）
 8. 如果某个类型的目录不存在，跳过该类型
 
 **上下文过滤（关键步骤）：**

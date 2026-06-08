@@ -29,6 +29,7 @@ scene-craft/
 ├── README.md
 ├── index.md
 ├── prose/             文笔技法（始终加载）
+├── pov/               视角切换（始终加载）
 ├── death-scene/       角色死亡/下线
 ├── dialogue/          对话场景
 ├── fight/             战斗场景
