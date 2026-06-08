@@ -25,7 +25,7 @@ description: 卷纲讨论 SOP——定核心冲突，拆章节，新设定追加
 
 从 story.md 继承本卷核心冲突后，先不急着拆章节，先问作者一句：
 
-> **"这卷从头到尾，读者的情绪怎么走？——比如爽卷就是压了又压→翻盘→打脸→装逼。虐卷参考 `knowledge/plot-craft/tragedy-techniques.md` 选择合适的手法。"**
+> **"这卷从头到尾，读者的情绪怎么走？——比如爽卷就是压了又压→翻盘→打脸→装逼。虐卷参考 `knowledge/plot-craft/tragedy-techniques.md` 选择合适的手法；情绪起伏设计参考 `knowledge/plot-craft/emotional-pull.md`。"**
 
 答案必须是一条弧线，不是单个情绪词。弧线至少 3 步：
 
