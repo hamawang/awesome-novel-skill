@@ -28,6 +28,7 @@ L5 场景序列填充完毕
 scene-craft/
 ├── README.md
 ├── index.md
+├── prose/             文笔技法（始终加载）
 ├── dialogue/          对话场景
 ├── fight/             战斗场景
 ├── appearance/        角色外貌描写

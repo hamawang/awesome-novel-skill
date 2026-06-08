@@ -7,6 +7,8 @@
 ```
 scene-craft/
 ├── index.md                      # 索引
+├── README.md                     # 使用说明
+├── prose/                        # 文笔技法（始终加载）
 ├── dialogue/                     # 对话场景
 │   ├── universal.md              #   通用对话方法论
 │   ├── xianxia.md                #   仙侠题材特化
