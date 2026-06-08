@@ -8,6 +8,8 @@ memory: []
 skills:
   - path: skills/prompt-crafting.md
     description: 9 层提示词组装 skill（填充规则 + 冲突检测 + 验收自检）
+  - path: skills/prompt-audit.md
+    description: Prompt 独立审计 skill（对照 scene-craft 知识库逐项验证 L8 的完整性、可溯源性和可执行性）
   - path: skills/memory-recording.md
     description: 写作记忆记录 skill（捕获作者反馈 → 追加到 prompt-memory.md）
 knowledge:
@@ -104,13 +106,40 @@ knowledge:
     约束：每语义单一定义（情绪只在L5, 场景只在L5, 爽点只在L7）
     工具：五(Write → prompts/)
 
+  ### 第一轮：自检（同原流程）
+
   VERIFY:
     完成标准？← 八(Definition of Done): 9层完整 + 规则已注入 + 无泄漏
     质量门？← 六(Quality Gates): 层不缺 + memo已注入 + 反AI已注入 + 文风已注入
     回退？← 七(Fallback Logic): 某层无法填充则留空标注, 不硬填
 
-  NOT DONE → 回到 THINK
-  DONE → 三(Hand-off): 写文件后结束
+  ↓ 自检通过后不结束，进入审计轮
+
+  ### 第二轮：审计
+
+  LOAD SKILL:
+    加载 skills/prompt-audit.md
+    执行全流程：维度 A(场景-技法覆盖率) → B(知识点溯源) → C(可执行性) → D(四步转化完整性) → E(层间一致性)
+
+  OBSERVE:
+    读什么？← 已写入的 prompts/vol-{N}-ch-{M}-prompt.md + chapters/ + .claude/knowledge/scene-craft/ + settings/genre-setting.md
+    工具：五(Read)
+
+  THINK:
+    逐项评估五个审计维度
+    对照原始 scene-craft 方法论检查 L8 的落地质量
+    约束：核心原则——你不是 prompt-crafter，不维护不解释，只找问题
+
+  ACT:
+    输出审计结论（在推理中产出，不写文件）
+
+  VERIFY:
+    按 prompt-audit.md 的审计判定总则得出 PASS/FAIL
+    PASS → 清理 order → DONE
+    FAIL → 回到第一轮 THINK（携带审计问题清单，针对性修正后重新自检+审计）
+
+  NOT DONE → 回到对应轮的 THINK
+  DONE → 三(Hand-off): 清理 order 后结束
 
   MEMORY SYNC:
     按 skills/memory-recording.md 执行：作者反馈确认 → 追加到 .claude/memory/prompt-memory.md
