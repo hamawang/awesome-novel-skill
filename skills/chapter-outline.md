@@ -102,7 +102,7 @@
 
 **g. Emotional Design（完善）** — 按 §四(情绪设计) 填充情绪细节：mood_progression（已在 a 完成）、intensity_peak、intensity_level、emotional_hook、micro_payoffs。
 
-**h. Hooks 操作** — 写入本章的钩子操作（埋/推进/收束）。不读写全局 hooks.md——真相源在各 chapter.md 的 hooks 字段。
+**h. Hooks 操作** — 写入本章的钩子操作（埋/推进/收束）。参考 `knowledge/plot-craft/hook-techniques.md` 中的三种钩子设计手法（认知错位/信息差/倒计时）。不读写全局 hooks.md——真相源在各 chapter.md 的 hooks 字段。
 
 **i. 设变通知（可选）** — 规划/校准过程中发现的设定变更需求。用于通知 novel-agent 调度 updater。按需在章纲末尾追加：
 
