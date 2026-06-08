@@ -54,7 +54,7 @@ python tools/init.py [project-path] [--genre <编号>]
 
 `init.py` 完成后进入 `@novel-agent`，此时 `phase=setup`，按以下流程：
 
-1. **novel-agent 检测到 setup 阶段**，与作者逐项讨论设定（世界观/角色/风格/题材）
+1. **novel-agent 检测到 setup 阶段**，与作者逐项讨论设定（世界观/角色/风格/题材）。如果作者需要帮忙取书名，参考 `knowledge/title-craft/index.md` 的方法论给出建议
 2. 讨论完毕后，novel-agent **写 order 文件** `.agent/task/setting-update-order.md`
 3. novel-agent 通过 **Agent 工具调用 updater**
 4. **updater 读取 order**，写入 `settings/world-setting.md`、`settings/genre-setting.md`、`settings/character-setting/*.md` 等设定文件
