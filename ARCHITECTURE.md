@@ -139,6 +139,10 @@ knowledge/                   # 静态参考知识 → 部署到项目 .claude/kn
 │   ├── prompt-setting-style.md      # 提示词组装结构（含驱动力/信息差/冲突阶梯层位）
 │   ├── writing-style.md             # 写作风格方法论
 │   └── memory-format-spec.md        # 记忆格式规范 + 生命周期
+├── scene-craft/              # 场景写作方法论（对话/战斗/环境/心理，按需注入L8）
+│   ├── index.md             # 索引
+│   ├── dialogue.md          # 对话场景写法
+│   └── fight.md             # 战斗场景写法
 └── genre-example/           # 填充案例（按题材）
 
 memory/                      # 静态参考素材 → 部署到项目 .claude/knowledge/
