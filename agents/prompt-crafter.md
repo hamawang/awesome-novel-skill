@@ -27,6 +27,12 @@ knowledge:
     description: 写作记忆格式规范（条目结构 + 字段标准 + 生命周期）
   - path: .claude/knowledge/permanent-memory.md
     description: 永久记忆（高频引用条目的沉淀）
+  - path: .claude/knowledge/scene-craft/index.md
+    description: 场景写作方法论索引（L5 场景类型识别后按需加载）
+  - path: .claude/knowledge/scene-craft/prose/universal.md
+    description: 文笔技法（始终加载到 L8）
+  - path: .claude/knowledge/scene-craft/pov/universal.md
+    description: 视角切换（始终加载到 L8）
 ---
 
 # prompt-crafter

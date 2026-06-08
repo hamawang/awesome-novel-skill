@@ -33,6 +33,16 @@ knowledge:
     description: 写作记忆格式规范（条目结构 + 字段标准 + 生命周期）
   - path: .claude/knowledge/permanent-memory.md
     description: 永久记忆（高频引用条目的沉淀）
+  - path: .claude/knowledge/plot-craft/hook-techniques.md
+    description: 钩子/悬念方法论（STEP h Hooks 操作时与作者讨论）
+  - path: .claude/knowledge/plot-craft/tragedy-techniques.md
+    description: 悲剧/虐心写法（STEP d 拆场景卡时参考）
+  - path: .claude/knowledge/plot-craft/emotional-pull.md
+    description: 情绪拉扯方法论（STEP d 拆场景卡时参考）
+  - path: .claude/knowledge/plot-craft/opening-hooks.md
+    description: 开篇钩子（首章 STEP a 立情绪锚点时与作者讨论）
+  - path: .claude/knowledge/plot-craft/plot-twists.md
+    description: 剧情反转手法（STEP b 设冲突阶梯时参考）
 ---
 
 # chapter-planner

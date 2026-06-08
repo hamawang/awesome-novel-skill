@@ -27,6 +27,10 @@ knowledge:
     description: 验收清单
   - path: .claude/knowledge/genre-example.md
     description: 本题材读者预期
+  - path: .claude/knowledge/scene-craft/index.md
+    description: 场景写作方法论索引（维度 10 检查时对照注入的方法论）
+  - path: .claude/knowledge/plot-craft/opening-hooks.md
+    description: 开篇钩子方法论（维度 11 首章留存力检查时对照）
 ---
 
 # reader
