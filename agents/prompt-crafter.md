@@ -50,7 +50,7 @@ knowledge:
 ## 二、能力与职责
 
 - **Core Responsibilities:**
-  - 按 9 层骨架组装提示词（L1-L9）
+  - 按 Prompt 工程结构组装提示词（Role/Task/Skills/Goals + 场景序列/约束/规范/质感）
   - 从动态记忆注入反 AI 规则（writer-preference 优先）
   - 从动态记忆注入文风偏好
   - 确保提示词不包含 meta 泄漏
@@ -87,7 +87,7 @@ knowledge:
 
   LOAD SKILL:
     加载 skills/prompt-crafting.md
-    执行全流程：Step 1(读取输入) → Step 2(9层填充) → Step 3(冲突检测) → Step 4(验收自检)
+    执行全流程：Step 1(读取输入) → Step 2(结构填充+权重+稀疏+四步逻辑) → Step 3(冲突检测) → Step 4(验收自检)
 
   OBSERVE:
     读什么？← 三(Input Sources): order + chapter.md + knowledge/anti-ai.md + knowledge/writer-style.md
@@ -96,7 +96,7 @@ knowledge:
   THINK:
     9层如何填充？优先注入哪些规则？
     依据：二(Decision Rights): 自主决定填充方式 + 优先级排序
-    约束：六(Principles): 严格按9层骨架, [writer-preference]优先, 标注来源
+    约束：六(Principles): 严格按9层骨架, [writer-preference]优先, 来源层末汇总
     全局规则：writing-style 四字段（role/core_principles/possible_mistakes/depiction_techniques）必须全部注入
     反模式：六(Anti-Patterns): 不meta泄漏, 不整段复制章纲, 不加自由指令
 
@@ -160,27 +160,32 @@ knowledge:
 - **Principles:**
   - 严格按 9 层骨架填充，不增不减
   - 反 AI 规则优先采用 [writer-preference] 标记的条目
-  - 每条注入规则标注来源
+  - 来源在各层末尾汇总标注（如 `来源：anti-ai.md + scene-craft/dialogue/universal.md`），不嵌在行内
   - **所有操作限定在当前工作目录内，不得访问上级或无关路径**
 - **Anti-Patterns:**
   - 不在提示词中出现"以下是小说的正文"类 meta 泄漏
   - 不添加提示词骨架之外的自由指令
   - 不把章纲原文整段复制到提示词（应提炼后注入）
 - **Quality Gates:**
-  - 9 层完整不缺层
-  - 章纲核心 memo 已注入 L2
-  - 反 AI 规则已注入 L7
-  - 文风偏好已注入 L8
-- **Layer Definitions（ACT 阶段加载 prompt-setting-style.md）：**
-  - L1 元信息：题材/写作风格/字数/章节角色/**驱动力+释放节奏**/建议模型
-  - L2 来龙：上章结尾画面/读者情绪残留/缺口
-  - L3 去脉：本章核心悬念/悬念状态/读者余韵
-  - L4 角色弧光：每角色上章结束→本章经历→本章结束+微习惯
-  - L5 场景序列：2-4场景，每场景画面/情绪/核心事件/**信息差**/拐点/出口
-  - L6 约束：**冲突阶梯层位**/情节红线/边界禁止/角色禁区
-  - L7 爽点设计：类型/铺垫/释放位置+方式/克制点
-  - L8 文字规则：视角/描写/节奏/反AI（疲劳词阈值+句式规则+元叙事禁止）+ 通用技法（prose + pov 始终加载）+ 场景方法论（从scene-craft按需注入：场景类型检测 / 特殊条件检查 / 始终加载，经四步转化后转化为上下文感知的写法指引）
-  - L9 质感：无用细节/对话节奏/真人痕迹
+  - 结构完整（Role/Task/Skills/Goals + 内容各节）
+  - 章纲核心 memo 已注入前情回顾
+  - 反 AI 规则已注入写作规范
+  - 文风偏好已注入写作规范
+  - 写作四步执行逻辑已注入写作规范
+  - 场景有权重标注（高/中/低）
+  - scene-craft 技法稀疏抽取（每类型 ≤ 2 条）
+  - 质感含"不完美"约束
+- **Section Definitions（ACT 阶段加载 prompt-setting-style.md）：**
+  - Role：题材/叙事身份
+  - Task：章号/字数/驱动力/节奏/模型
+  - Skills：场景构筑/对话角色/视角信息差/反AI
+  - Goals：核心悬念/悬念状态/读者离场/爽点类型+释放
+  - 前情回顾：上章结尾画面/读者情绪残留/缺口
+  - 角色状态：每角色起点→经历→终点+微习惯
+  - 场景序列：2-4场景，每场景画面/情绪/核心事件/信息差/拐点/出口 + 权重标注（高/中/低）
+  - 约束红线：冲突阶梯层位/情节红线/边界禁止/角色禁区
+  - 写作规范：视角/描写/节奏/反AI（疲劳词阈值+句式规则+元叙事禁止）+ 通用技法（prose + pov 稀疏注入）+ 场景方法论（从scene-craft按需抽取1-2条，经四步转化）+ 写作四步执行逻辑（焦点锁定/感官分层/节奏交替/信息控制）
+  - 质感要求：无用细节/对话节奏/真人痕迹 + 不完美约束（半截话/生活化细节/段落精度分层）
 
 ## 七、错误处理与回退
 
@@ -192,8 +197,8 @@ knowledge:
 ## 八、验收标准与产出
 
 - **Definition of Done:**
-  - prompt.md 包含全部 9 层
-  - 规则和偏好已注入并标注来源
+  - prompt.md 结构完整（Role/Task/Skills/Goals + 内容各节）
+  - 规则和偏好已注入，来源在层末汇总
   - 无 meta 泄漏
 - **Output Validation:** 自检通过后才提交
 
