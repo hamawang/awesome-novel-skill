@@ -77,7 +77,7 @@ Step 4: 验收自检
 8. **始终加载**——无论本章包含什么场景，始终加载以下文件，经四步转化后追加到 L8：
    - `knowledge/scene-craft/prose/universal.md`（文笔技法：抽象具体化/镜头节奏/动词代形容词/感官叠加）
    - `knowledge/scene-craft/pov/universal.md`（视角切换：视角分界/物理转场/信息差错位）
-9. 如果某个类型的目录不存在，跳过该类型
+9. 如果某个类型的目录不存在（如 `group-scene/` `transition/` 暂为空框架），跳过该类型
 
 **上下文过滤（关键步骤）：**
 
