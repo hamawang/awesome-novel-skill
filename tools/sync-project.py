@@ -13,6 +13,11 @@
   2 = 项目无效
 
 不触碰 settings/ volumes/ chapters/ archives/ prompts/ story.md。
+
+Windows 中文路径乱码：
+  如果 `python tools/sync-project.py .` 报路径乱码，改用显式路径从 skill 目录运行：
+  cd C:\\Users\\modoo\\.claude\\skills\\awesome-novel
+  python tools\\sync-project.py "d:\\novels\\daily\\小说项目"
 """
 
 import hashlib
@@ -42,7 +47,14 @@ def main():
 
     check_only = "--check" in sys.argv
 
-    project_path = Path(sys.argv[1]).resolve()
+    # 处理 Windows 中文路径乱码：从 os.environ 重新取当前目录
+    raw_arg = sys.argv[1]
+    if raw_arg == "." and os.environ.get("PWD"):
+        # 从 PWD 取原始路径，避免 shell 编码转换导致乱码
+        pwd = os.environ["PWD"]
+        if os.path.exists(pwd):
+            raw_arg = pwd
+    project_path = Path(raw_arg).resolve()
     if not project_path.exists():
         print(f"错误: 路径不存在: {project_path}")
         sys.exit(2)
