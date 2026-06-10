@@ -1,7 +1,3 @@
----
-name: writer
-description: 正文生成 SOP——从提示词到正文草稿，含 sub-agent 写作指令、防 AI 味规则、输出验证与快照保存
----
 
 # writer skill
 

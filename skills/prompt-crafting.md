@@ -1,7 +1,3 @@
----
-name: prompt-crafter
-description: Prompt 工程化组装 SOP——从章纲、动态记忆和知识库组装 角色/任务/方法/要求/验收 5 层结构，含场景权重标注、稀疏技法抽取、写作方法论注入、冲突检测与验收
----
 
 # prompt-crafter skill
 

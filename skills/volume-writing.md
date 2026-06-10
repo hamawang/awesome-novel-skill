@@ -1,7 +1,3 @@
----
-name: volume-writing
-description: 卷纲讨论 SOP——定核心冲突，拆章节，新设定追加，产出写入，验收
----
 
 # 卷纲讨论 skill
 
@@ -226,19 +222,16 @@ description: 卷纲讨论 SOP——定核心冲突，拆章节，新设定追加
 卷纲讨论中新增的角色/设定，在 volume-{N}.md 末尾追加设定变更通知块，由 novel-agent 在写作循环前调度 updater 执行：
 
 ```
----
 ## 设定变更通知
 
 - **目标：** settings/character-setting/{id}.md
 - **类型：** 新角色
 - **详情：** {角色基础设定}
 
----
 
 - **目标：** settings/world-setting.md
 - **类型：** 世界观更新
 - **详情：** {变更描述}
----
 ```
 
 一致性检查 → 新增设定与已归档章节无矛盾。

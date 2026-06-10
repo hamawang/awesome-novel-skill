@@ -1,7 +1,3 @@
----
-name: memory-recording
-description: 写作记忆记录 SOP——捕获、记录、压缩，各 agent 在互动中实时写入，updater 兜底清理
----
 
 # 写作记忆记录 skill
 
