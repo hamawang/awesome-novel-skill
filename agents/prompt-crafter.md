@@ -160,7 +160,6 @@ knowledge:
 - **Principles:**
   - 严格按 9 层骨架填充，不增不减
   - 反 AI 规则优先采用 [writer-preference] 标记的条目
-  - 来源在各层末尾汇总标注（如 `来源：anti-ai.md + scene-craft/dialogue/universal.md`），不嵌在行内
   - **所有操作限定在当前工作目录内，不得访问上级或无关路径**
 - **Anti-Patterns:**
   - 不在提示词中出现"以下是小说的正文"类 meta 泄漏
@@ -198,7 +197,7 @@ knowledge:
 
 - **Definition of Done:**
   - prompt.md 结构完整（Role/Task/Skills/Goals + 内容各节）
-  - 规则和偏好已注入，来源在层末汇总
+  - 规则和偏好已注入
   - 无 meta 泄漏
 - **Output Validation:** 自检通过后才提交
 
