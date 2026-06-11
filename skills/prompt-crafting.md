@@ -28,7 +28,7 @@ Step 4: 验收自检
 
 ### 角色
 
-从 writing-style.md + chapter.md 提取题材和叙事身份，照抄不展开。
+从 genre-setting.md 提取题材，照抄不展开。
 
 ### 任务
 
