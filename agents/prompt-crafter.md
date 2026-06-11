@@ -9,7 +9,7 @@ skills:
   - path: skills/prompt-crafting.md
     description: 4 层提示词组装 skill（填充规则 + 冲突检测 + 验收自检）
   - path: skills/prompt-audit.md
-    description: Prompt 独立审计 skill（对照 scene-craft 知识库逐项验证 要求层·写作规范 的完整性、可溯源性和可执行性）
+    description: Prompt 独立审计 skill（对照 scene-craft 知识库逐项验证 输出·写作规范 的完整性、可溯源性和可执行性）
   - path: skills/memory-recording.md
     description: 写作记忆记录 skill（捕获作者反馈 → 追加到 prompt-memory.md）
 knowledge:
@@ -30,11 +30,11 @@ knowledge:
   - path: .claude/knowledge/permanent-memory.md
     description: 永久记忆（高频引用条目的沉淀）
   - path: .claude/knowledge/scene-craft/index.md
-    description: 场景写作方法论索引（方法层·场景原材料 场景类型识别后按需加载）
+    description: 场景写作方法论索引（输入·场景原材料 场景类型识别后按需加载）
   - path: .claude/knowledge/scene-craft/prose/universal.md
-    description: 文笔技法（始终加载到 要求层·写作规范）
+    description: 文笔技法（始终加载到 输出·写作规范）
   - path: .claude/knowledge/scene-craft/pov/universal.md
-    description: 视角切换（始终加载到 要求层·写作规范）
+    description: 视角切换（始终加载到 输出·写作规范）
 ---
 
 # prompt-crafter
@@ -50,7 +50,7 @@ knowledge:
 ## 二、能力与职责
 
 - **Core Responsibilities:**
-  - 按 Prompt 工程结构组装提示词（角色/任务/方法/要求 四层）
+  - 按 Prompt 工程结构组装提示词（角色/任务指示/背景信息/案例/输入/输出）
   - 从动态记忆注入反 AI 规则（writer-preference 优先）
   - 从动态记忆注入文风偏好
   - 确保提示词不包含 meta 泄漏
@@ -103,7 +103,7 @@ knowledge:
   ACT:
     组装提示词 → 写prompts/vol-{N}-ch-{M}-prompt.md
     写前加载：prompt-setting-style.md 5层填充规则
-    约束：每语义单一定义（情绪只在方法层·场景原材料, 场景只在方法层·场景原材料, 爽点只在任务层·叙事目标）
+    约束：每语义单一定义（情绪只在输入·场景原材料, 场景只在输入·场景原材料, 爽点只在任务指示·叙事目标）
     工具：五(Write → prompts/)
 
   ### 第一轮：自检（同原流程）
@@ -127,7 +127,7 @@ knowledge:
 
   THINK:
     逐项评估五个审计维度
-    对照原始 scene-craft 方法论检查 要求层·写作规范 的落地质量
+    对照原始 scene-craft 方法论检查 输出·写作规范 的落地质量
     约束：核心原则——你不是 prompt-crafter，不维护不解释，只找问题
 
   ACT:
@@ -166,25 +166,24 @@ knowledge:
   - 不添加提示词骨架之外的自由指令
   - 不把章纲原文整段复制到提示词（应提炼后注入）
 - **Quality Gates:**
-  - 结构完整（角色/任务/方法/要求 4 层不缺）
+  - 结构完整（角色/任务指示/背景信息/案例/输入/输出 6 元素不缺）
   - 章纲核心 memo 已注入前情上下文
-  - 反 AI 规则已注入要求层·写作规范
-  - 文风偏好已注入要求层·写作规范
-  - 写作方法论已注入方法层
+  - 反 AI 规则已注入输出·写作规范
+  - 文风偏好已注入输出·写作规范
+  - 写作方法论已注入任务指示
   - 场景有权重标注（高/中/低）
   - scene-craft 技法稀疏抽取（每类型 ≤ 2 条）
   - 质感含"不完美"约束
 - **Section Definitions（ACT 阶段加载 prompt-setting-style.md）：**
   - 角色：作者小说题材
-  - 任务：章号/字数/驱动力/节奏 | 叙事目标（核心悬念+悬念状态+读者情绪+爽点设计）
-  - 方法·写作能力：场景构筑/对话角色/视角信息差/反AI
-  - 方法·前情上下文：上章结尾画面/读者情绪残留/缺口（ch-1 固定无前置章节）
-  - 方法·角色初始状态：每角色起点→经历→终点+微习惯
-  - 方法·场景原材料：2-4场景，每场景画面/情绪/核心事件/信息差/拐点/出口 + 权重标注
-  - 方法·写作方法论：四步执行流程（焦点锁定/感官分层/节奏交替/信息控制）
-  - 要求·约束红线：冲突阶梯层位/情节红线/边界禁止/角色禁区
-  - 要求·写作规范：视角/描写/节奏/反AI + 通用技法（prose+pov稀疏注入）+ 场景方法论（四步转化后注入）
-  - 要求·质感要求：无用细节/对话节奏/真人痕迹 + 不完美约束
+  - 任务指示：章号/字数/驱动力/节奏 | 叙事目标（核心悬念+悬念状态+读者情绪+爽点设计） | 写作方法论（四步执行流程）
+  - 背景信息·前情上下文：上章结尾画面/读者情绪残留/缺口（ch-1 固定无前置章节）
+  - 背景信息·角色初始状态：每角色起点→经历→终点+微习惯
+  - 案例：场景方法论经四步转化后的写作参考示例
+  - 输入·场景原材料：2-4场景，每场景画面/情绪/核心事件/信息差/拐点/出口 + 权重标注
+  - 输出·约束红线：冲突阶梯层位/情节红线/边界禁止/角色禁区
+  - 输出·写作规范：视角/描写/节奏/反AI + 通用技法（prose+pov稀疏注入）+ 场景方法论（四步转化后注入）
+  - 输出·质感要求：无用细节/对话节奏/真人痕迹 + 不完美约束
 
 ## 七、错误处理与回退
 
@@ -196,7 +195,7 @@ knowledge:
 ## 八、验收标准与产出
 
 - **Definition of Done:**
-  - prompt.md 结构完整（角色/任务/方法/要求 4 层 + 内容各节）
+  - prompt.md 结构完整（角色/任务指示/背景信息/案例/输入/输出 6 元素）
   - 规则和偏好已注入
   - 无 meta 泄漏
 - **Output Validation:** 自检通过后才提交
