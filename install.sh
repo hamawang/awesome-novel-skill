@@ -74,13 +74,14 @@ fi
 rm -rf "$DEST"
 mkdir -p "$DEST"
 
-# 只复制运行时需要的文件（include list，避免泄露仓库元数据）
+# 复制运行时需要的文件（include list，避免泄露仓库元数据）
 cp "$SCRIPT_DIR/SKILL.md" "$DEST/"
 cp -r "$SCRIPT_DIR/agents" "$DEST/"
 cp -r "$SCRIPT_DIR/skills" "$DEST/"
 cp -r "$SCRIPT_DIR/knowledge" "$DEST/"
-cp -r "$SCRIPT_DIR/memory" "$DEST/"
 cp -r "$SCRIPT_DIR/templates" "$DEST/"
 cp -r "$SCRIPT_DIR/tools" "$DEST/"
+# memory/ 已迁移到 knowledge/（anti-ai + writer-style），仅在存在时复制以兼容旧版
+[ -d "$SCRIPT_DIR/memory" ] && cp -r "$SCRIPT_DIR/memory" "$DEST/"
 
 echo "安装完成!"
