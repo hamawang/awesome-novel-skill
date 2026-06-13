@@ -1,6 +1,6 @@
 # 反 AI 写作规则库
 
-> deslop 管线核心参考。包含分级禁用表、去 AI 方法论、题材正反例。
+> anti-ai 管线核心参考。包含分级禁用表、去 AI 方法论、题材正反例。
 
 ## 目录
 
@@ -30,7 +30,7 @@
 ## 使用场景
 
 ```
-deslop agent 执行去 AI 味时：
+anti-ai agent 执行去 AI 味时：
     ↓
 读取 common-rules.md（分级禁用表）
     ↓
@@ -41,7 +41,7 @@ deslop agent 执行去 AI 味时：
 按 Phase 1-4 管线执行替换
 ```
 
-### deslop Phase 3
+### anti-ai Phase 3
 按题材查对应正反例做精确替换
 
 ### prompt-crafter
@@ -59,7 +59,7 @@ deslop agent 执行去 AI 味时：
 
 ### anti-ai-writing.md — 方法论指南
 
-deslop 各 Phase 的方法论基础。包含：
+anti-ai 各 Phase 的方法论基础。包含：
 - **AI 写作指纹** — 高频词/章末总结/叠加描写/均匀分布
 - **Show Don't Tell** — 核心公式 + 五感检查
 - **7 种 AI 写作模式检测** — 每种的信号/特征/修复

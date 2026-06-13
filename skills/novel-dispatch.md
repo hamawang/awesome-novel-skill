@@ -18,7 +18,7 @@ novel-agent **只做三件事**：
 | outline | chapter-planner | `chapter-plan-order.md` |
 | draft | prompt-crafter | `prompt-craft-order.md` |
 | draft | writer | `writing-order.md` |
-| deslop | deslop | `deslop-order.md` |
+| anti-ai | anti-ai | `anti-ai-order.md` |
 | review | reader | `reader-review-order.md` |
 | archive | updater | `archive-order.md` |
 

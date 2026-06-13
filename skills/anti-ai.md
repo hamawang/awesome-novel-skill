@@ -1,4 +1,4 @@
-# deslop skill — 去 AI 味管线
+# anti-ai skill — 去 AI 味管线
 
 ## 职责
 
@@ -14,7 +14,7 @@ Phase 2 诊断 — 6 项量化指标打分，定级（轻/中/重）
 Phase 3 逐项清除 — Gate A-F 系统修改（多轮收敛）
 Phase 4 报告 — 输出修改报告
 
-输出：archives/*.deslopped.md
+输出：archives/*.anti-ai.md
 ```
 
 ## 参考文件
@@ -226,7 +226,7 @@ Gate F: 命中 X 处（按 F1-F4 分类）
 
 ### 白名单
 
-若同级目录存在 `.deslop-whitelist` 文件，其中列出的段落跳过所有 Gate 检查。
+若同级目录存在 `.anti-ai-whitelist` 文件，其中列出的段落跳过所有 Gate 检查。
 
 ---
 
