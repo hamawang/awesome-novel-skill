@@ -77,7 +77,20 @@
 
 信息差变化决定了本章的驱动力节奏（悬疑/威胁/目标/关系/信息差驱动）。
 
-**d. 拆场景卡** — 按 §二(从方向到纲要点) 的三段锚点法拆解关键点。每条关键点对应一个场景卡，底层逻辑与卷纲一致。如果本章涉及悲剧/虐心情节，参考 `.claude/knowledge/plot-craft/tragedy-techniques.md` 设计情绪节奏；情绪拉扯参考 `.claude/knowledge/plot-craft/emotional-pull.md`：
+**d. 定视角策略** — 确认本章用谁的视角叙事。
+
+> "这章从谁的视角写？默认主角有限 POV。如果想切视角——比如前两段从反派视角写——你怎么切、切到哪里切回来。"
+
+记录到大纲·视角字段（`outline.pov`）。
+
+| 策略 | 说明 | 示例 |
+|------|------|------|
+| 单主角有限POV | 全程锁定一人，只写TA感知到的 | `陆征（单主角有限POV）` |
+| 多段切换POV | 按段落切换视角人物 | `前2段反派POV，之后切回陆征` |
+
+POV 确定后进入拆场景卡（e），场景卡的三段锚点以此 POV 角色的感知为基准。如果是多段切换，各段分别以对应 POV 角色为基准。
+
+**e. 拆场景卡** — 按 §二(从方向到纲要点) 的三段锚点法拆解关键点。每条关键点对应一个场景卡，底层逻辑与卷纲一致。如果本章涉及悲剧/虐心情节，参考 `.claude/knowledge/plot-craft/tragedy-techniques.md` 设计情绪节奏；情绪拉扯参考 `.claude/knowledge/plot-craft/emotional-pull.md`：
 
 ```
 场景卡三要素 → 关键点中的体现
@@ -88,9 +101,9 @@
 
 拆出 8-12 条 key_points，每条用三段锚点法（感官+动作+判断）写 2-3 句。出完整方案时让作者确认。
 
-**e. 禁止清单** — 按 §(不做什么——硬约束红线) 询问并记录 prohibitions。
+**f. 禁止清单** — 按 §(不做什么——硬约束红线) 询问并记录 prohibitions。
 
-**f. Chapter Memo 填充** — 按 §三(章纲内容清单) 的 7 段逐段填充（情绪锚点/信息差/冲突阶梯已在 a-c 完成，此处填充其余字段）：
+**g. Chapter Memo 填充** — 按 §三(章纲内容清单) 的 7 段逐段填充（情绪锚点/信息差/冲突阶梯已在 a-c 完成，此处填充其余字段）：
 1. current_task（当前任务）
 2. reader_expectation（读者期待）
 3. payoff_plan（兑现计划）
@@ -101,11 +114,11 @@
 
 填完后展示完整 memo 供作者确认。
 
-**g. Emotional Design（完善）** — 按 §四(情绪设计) 填充情绪细节：mood_progression（已在 a 完成）、intensity_peak、intensity_level、emotional_hook、micro_payoffs。
+**h. Emotional Design（完善）** — 按 §四(情绪设计) 填充情绪细节：mood_progression（已在 a 完成）、intensity_peak、intensity_level、emotional_hook、micro_payoffs。
 
-**h. Hooks 操作** — 写入本章的钩子操作（埋/推进/收束）。参考 `.claude/knowledge/plot-craft/hook-techniques.md` 中的三种钩子设计手法（认知错位/信息差/倒计时）。不读写全局 hooks.md——真相源在各 chapter.md 的 hooks 字段。
+**i. Hooks 操作** — 写入本章的钩子操作（埋/推进/收束）。参考 `.claude/knowledge/plot-craft/hook-techniques.md` 中的三种钩子设计手法（认知错位/信息差/倒计时）。不读写全局 hooks.md——真相源在各 chapter.md 的 hooks 字段。
 
-**i. 设变通知（可选）** — 规划/校准过程中发现的设定变更需求。用于通知 novel-agent 调度 updater。按需在章纲末尾追加：
+**j. 设变通知（可选）** — 规划/校准过程中发现的设定变更需求。用于通知 novel-agent 调度 updater。按需在章纲末尾追加：
 
 ```
 ## 设定变更通知
