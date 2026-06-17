@@ -21,6 +21,7 @@ Windows 中文路径乱码：
 """
 
 import hashlib
+import subprocess
 import sys
 import os
 import shutil
@@ -38,6 +39,7 @@ AGENT_DIR = SKILL_HOME / "agents"
 SKILL_DIR = SKILL_HOME / "skills"
 KNOWLEDGE_DIR = SKILL_HOME / "knowledge"
 FINGERPRINT_FILE = Path(".agent") / ".sync-fingerprint"
+VERSION_FILE = Path(".agent") / ".sync-version"
 
 
 def main():
@@ -50,7 +52,6 @@ def main():
     # 处理 Windows 中文路径乱码：从 os.environ 重新取当前目录
     raw_arg = sys.argv[1]
     if raw_arg == "." and os.environ.get("PWD"):
-        # 从 PWD 取原始路径，避免 shell 编码转换导致乱码
         pwd = os.environ["PWD"]
         if os.path.exists(pwd):
             raw_arg = pwd
@@ -75,6 +76,28 @@ def main():
 # 指纹机制
 # ============================================================
 
+def get_latest_version() -> str | None:
+    """从 git tag 获取 skill 最新版本号"""
+    try:
+        result = subprocess.run(
+            ["git", "-C", str(SKILL_HOME), "describe", "--tags", "--abbrev=0"],
+            capture_output=True, text=True, timeout=10,
+        )
+        if result.returncode == 0:
+            return result.stdout.strip()
+        return None
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return None
+
+
+def get_version_info() -> tuple[str | None, str | None]:
+    """返回 (latest_tag, version_summary)，version_summary 用于显示"""
+    tag = get_latest_version()
+    if tag:
+        return tag, tag
+    return None, "unknown"
+
+
 def compute_fingerprint() -> str:
     """对 skill 源目录的所有 agent/skill/knowledge 文件算一个 hash"""
     files = []
@@ -92,17 +115,30 @@ def compute_fingerprint() -> str:
     return h.hexdigest()
 
 
-def read_project_fingerprint(project: Path) -> str | None:
+def read_project_fingerprint(project: Path) -> tuple[str | None, str | None]:
+    """返回 (fingerprint, version)"""
     fp = project / FINGERPRINT_FILE
+    vp = project / VERSION_FILE
+    finger = None
+    version = None
     if fp.exists():
-        return fp.read_text(encoding="utf-8").strip()
-    return None
+        finger = fp.read_text(encoding="utf-8").strip()
+    if vp.exists():
+        version = vp.read_text(encoding="utf-8").strip()
+    return finger, version
 
 
-def write_project_fingerprint(project: Path, fingerprint: str):
+def write_project_fingerprint(project: Path, fingerprint: str, version: str | None = None):
     fp = project / FINGERPRINT_FILE
     fp.parent.mkdir(parents=True, exist_ok=True)
     fp.write_text(fingerprint + "\n", encoding="utf-8")
+
+    vp = project / VERSION_FILE
+    if version:
+        vp.parent.mkdir(parents=True, exist_ok=True)
+        vp.write_text(version + "\n", encoding="utf-8")
+    elif vp.exists():
+        vp.unlink(missing_ok=True)
 
 
 # ============================================================
@@ -111,31 +147,39 @@ def write_project_fingerprint(project: Path, fingerprint: str):
 
 def check_freshness(project: Path):
     current = compute_fingerprint()
-    stored = read_project_fingerprint(project)
+    stored, stored_ver = read_project_fingerprint(project)
+    latest_ver, _ = get_version_info()
 
     if stored is None:
         print("项目缺少同步指纹，无法判断新鲜度。运行 sync-project.py 同步后生成。")
         sys.exit(1)
 
+    version_diff = latest_ver and stored_ver and stored_ver != latest_ver
+    version_info = ""
+    if version_diff:
+        version_info = f"  [版本] 项目记录: {stored_ver}  →  最新: {latest_ver}"
+    elif latest_ver and not stored_ver:
+        version_info = f"  [版本] 最新: {latest_ver}（项目未记录版本）"
+
     if current == stored:
+        if version_diff:
+            print(f"文件已是最新。{version_info}")
+            sys.exit(1)
         print("已是最新。")
         sys.exit(0)
     else:
-        # 找出具体哪些文件变了
         changes = find_changes(project)
-        print(f"有更新可用 ({len(changes)} 个文件发生变化):")
+        lines = [f"有更新可用 ({len(changes)} 个文件发生变化):"]
         for f in changes:
-            print(f"  - {f}")
+            lines.append(f"  - {f}")
+        if version_info:
+            lines.append(version_info)
+        print("\n".join(lines))
         sys.exit(1)
 
 
 def find_changes(project: Path) -> list[str]:
     """返回与源不同的文件列表（相对路径）"""
-    sources = {
-        "agents": project / ".claude" / "agents",
-        "skills": project / ".claude" / "skills",
-        "knowledge": project / ".claude" / "knowledge",
-    }
     changed = []
 
     for name, src_dir in [("agents", AGENT_DIR), ("skills", SKILL_DIR), ("knowledge", KNOWLEDGE_DIR)]:
@@ -160,12 +204,18 @@ def find_changes(project: Path) -> list[str]:
 def do_sync(project: Path):
     print(f"项目: {project}")
     print(f"来源: {SKILL_HOME}")
+
+    latest_ver, _ = get_version_info()
+    if latest_ver:
+        print(f"版本: {latest_ver}")
     print()
 
-    # 检查当前新鲜度
     current_fp = compute_fingerprint()
-    stored_fp = read_project_fingerprint(project)
-    if stored_fp == current_fp:
+    stored_fp, stored_ver = read_project_fingerprint(project)
+
+    version_changed = latest_ver and stored_ver and stored_ver != latest_ver
+
+    if stored_fp == current_fp and not version_changed:
         print("[i] 已是最新，无需同步。")
         return
 
@@ -176,10 +226,10 @@ def do_sync(project: Path):
 
     total = sum(c for c in changes if c > 0)
 
-    if total > 0 or stored_fp != current_fp:
-        write_project_fingerprint(project, current_fp)
+    if total > 0 or stored_fp != current_fp or version_changed:
+        write_project_fingerprint(project, current_fp, latest_ver)
 
-    print(f"\n完成。共同步 {total} 个文件。")
+    print(f"\n完成。共同步 {total} 个文件。版本: {latest_ver or 'unknown'}")
     if total > 0:
         print("提示: 下次写作时生效。")
 
